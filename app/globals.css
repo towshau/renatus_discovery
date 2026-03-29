@@ -21,6 +21,11 @@ body {
   font-family: var(--font-playfair), ui-serif, Georgia, "Times New Roman", serif;
 }
 
+@page {
+  size: A4 portrait;
+  margin: 12mm 14mm;
+}
+
 @media print {
   .no-print {
     display: none !important;
@@ -35,12 +40,92 @@ body {
     -webkit-print-color-adjust: exact;
   }
 
+  /* Roadmap PDF: slightly compact type + spacing so A4 pages fill without manual scale */
   .roadmap-print {
-    padding-top: 1rem !important;
-    padding-bottom: 1rem !important;
+    padding: 0.75rem 0.5rem 1rem !important;
+    font-size: 10.5pt;
+    line-height: 1.38;
+    background: #fff !important;
+    box-sizing: border-box;
+    /* Chrome/Edge: nudge fit; ignored by Firefox (harmless) */
+    zoom: 0.96;
   }
 
-  .roadmap-print .rounded-xl {
+  .roadmap-print h1 {
+    font-size: 22pt !important;
+    margin-top: 0.25rem !important;
+  }
+
+  .roadmap-print h2 {
+    font-size: 14pt !important;
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  .roadmap-print h3 {
+    font-size: 12pt !important;
+  }
+
+  .roadmap-print .max-w-3xl {
+    max-width: 100% !important;
+  }
+
+  .roadmap-print .shadow-sm {
+    box-shadow: none !important;
+  }
+
+  /* Keep heading + intro with chart/bars (avoids empty band under “Pillar breakdown”) */
+  .roadmap-print-pillar-block {
+    break-inside: avoid-page;
+    page-break-inside: avoid;
+  }
+
+  /* Stack radar over bars in print; print often uses wide logical width and md: breaks layout */
+  .roadmap-print-pillar-chart {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 1rem !important;
+    margin-top: 0.75rem !important;
+  }
+
+  .roadmap-print-pillar-chart > * {
+    min-height: 0;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .roadmap-print .pillar-radar-chart {
+    display: block;
+    width: 220px !important;
+    height: 220px !important;
+    max-width: 220px !important;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Small roadmap cards: keep bucket + title together when possible */
+  .roadmap-print-bucket {
+    break-inside: avoid-page;
+    page-break-inside: avoid;
+  }
+
+  /* Playbook rows: one summary block per pillar; allow body to paginate if user opens before print */
+  .roadmap-print details {
     break-inside: avoid;
+  }
+
+  .roadmap-print details summary {
+    list-style: none;
+  }
+
+  .roadmap-print details > *:not(summary) {
+    /* Default: match on-screen open/closed so pagination matches normal view */
+    break-inside: auto;
+  }
+
+  .roadmap-print svg {
+    max-width: 100%;
+    height: auto;
   }
 }

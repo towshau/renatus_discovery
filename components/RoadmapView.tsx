@@ -13,6 +13,8 @@ import { PHASES, SCORED_PHASE_IDS, isNotesField } from "@/lib/phases";
 import { PhaseIcon } from "@/lib/phase-icons";
 import { computePhaseScore, type PillarUrgencyRow } from "@/lib/scoring";
 import { cn } from "@/lib/cn";
+import { PillarRadarChart } from "./PillarRadarChart";
+import { PillarPlaybooksSection } from "./PillarPlaybooksSection";
 import { ScoreBar } from "./ScoreBar";
 import { ScoreRing } from "./ScoreRing";
 
@@ -33,7 +35,7 @@ function BucketSection({
   return (
     <section
       className={cn(
-        "rounded-lg border border-zinc-200 bg-white p-6 shadow-sm",
+        "roadmap-print-bucket rounded-lg border border-zinc-200 bg-white p-6 shadow-sm",
         "border-l-[3px]",
         borderClass,
       )}
@@ -52,7 +54,7 @@ function BucketSection({
               </span>
               {row.title}
             </p>
-            <ScoreBar score={row.average} showValue />
+            <ScoreBar score={row.average} showValue showDenominator />
           </div>
         ))}
       </div>
@@ -105,8 +107,8 @@ export function RoadmapView() {
   }
 
   return (
-    <div className="roadmap-print bg-zinc-50/50 px-4 py-10 md:px-14 md:py-14">
-      <header className="mx-auto max-w-3xl text-center print:py-4">
+    <div className="roadmap-print bg-zinc-50/50 px-4 py-10 md:px-14 md:py-14 print:bg-white print:px-2 print:py-2 md:print:px-4">
+      <header className="mx-auto max-w-3xl text-center print:py-2 print:break-inside-avoid print:page-break-inside-avoid">
         <span className="inline-block rounded-md border border-zinc-200 bg-white px-3 py-1 font-mono text-[10px] font-medium uppercase tracking-[0.2em] text-zinc-600">
           Diagnostic complete
         </span>
@@ -117,12 +119,13 @@ export function RoadmapView() {
           AI transformation roadmap — <span className="text-zinc-800">{ownerName}</span>
         </p>
 
-        <div className="relative mx-auto mt-12 flex justify-center">
-          <div className="relative inline-flex items-center justify-center">
+        <div className="relative mx-auto mt-12 flex justify-center print:mt-6">
+          <div className="relative inline-flex items-center justify-center print:scale-90 print:origin-center">
             <ScoreRing score={overall} />
             <div className="absolute inset-0 flex flex-col items-center justify-center">
               <span className="font-mono text-4xl font-medium tabular-nums text-zinc-900">
                 {overall.toFixed(1)}
+                <span className="text-2xl font-normal text-zinc-500"> / 4</span>
               </span>
             </div>
           </div>
@@ -130,33 +133,53 @@ export function RoadmapView() {
         <p className="mt-5 font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-500">
           Overall maturity score
         </p>
+        <p className="mx-auto mt-3 max-w-md text-center text-sm leading-relaxed text-zinc-600">
+          Overall maturity is the average of pillar scores. Each diagnostic question uses
+          a <strong className="font-medium text-zinc-800">0–4</strong> scale (five ordered
+          levels); pillar scores are averages of those answers.{" "}
+          <strong className="font-medium text-zinc-800">Maximum score: 4</strong> per
+          question and for each pillar average.
+        </p>
       </header>
 
-      <div className="mx-auto mt-14 max-w-3xl space-y-10">
-        <section className="rounded-lg border border-zinc-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-6 font-display text-xl font-semibold text-zinc-900">
+      <div className="mx-auto mt-14 max-w-3xl space-y-10 print:mt-8 print:space-y-6">
+        <section className="roadmap-print-pillar-block rounded-lg border border-zinc-200 bg-white p-6 shadow-sm print:p-4">
+          <h2 className="font-display text-xl font-semibold text-zinc-900">
             Pillar breakdown
           </h2>
-          <div className="space-y-4">
-            {SCORED_PHASE_IDS.map((phaseId) => {
-              const phase = PHASES.find((p) => p.id === phaseId);
-              const ps = computePhaseScore(answers, phaseId);
-              const label = phase?.title ?? phaseId;
-              return (
-                <ScoreBar
-                  key={phaseId}
-                  label={label}
-                  score={ps?.average ?? 0}
-                  valueLabel={ps ? undefined : "—"}
-                  showValue
-                />
-              );
-            })}
+          <p className="mt-2 text-sm text-zinc-600">
+            Scores below are pillar averages on the same <strong className="text-zinc-800">0–4</strong>{" "}
+            scale (maximum <strong className="text-zinc-800">4</strong> per pillar). Missing pillars
+            show 0 until scored in the diagnostic.
+          </p>
+          <div className="roadmap-print-pillar-chart mt-8 flex flex-col gap-10 md:flex-row md:items-start md:gap-8">
+            <div className="flex shrink-0 justify-center md:w-[min(100%,320px)]">
+              <PillarRadarChart answers={answers} />
+            </div>
+            <div className="min-w-0 flex-1 space-y-3 print:space-y-2">
+              {SCORED_PHASE_IDS.map((phaseId) => {
+                const phase = PHASES.find((p) => p.id === phaseId);
+                const ps = computePhaseScore(answers, phaseId);
+                const label = phase?.title ?? phaseId;
+                return (
+                  <ScoreBar
+                    key={phaseId}
+                    label={label}
+                    score={ps?.average ?? 0}
+                    valueLabel={ps ? undefined : "—"}
+                    showDenominator={!!ps}
+                    showValue
+                  />
+                );
+              })}
+            </div>
           </div>
         </section>
 
-        <div className="space-y-5">
-          <h2 className="font-display text-xl font-semibold text-zinc-900">
+        <PillarPlaybooksSection />
+
+        <div className="space-y-5 print:space-y-3">
+          <h2 className="font-display text-xl font-semibold text-zinc-900 print:break-after-avoid">
             Prioritised roadmap
           </h2>
           <BucketSection
@@ -182,8 +205,8 @@ export function RoadmapView() {
           />
         </div>
 
-        <section className="rounded-lg border border-zinc-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-6 font-display text-xl font-semibold text-zinc-900">
+        <section className="rounded-lg border border-zinc-200 bg-white p-6 shadow-sm print:p-4">
+          <h2 className="mb-6 font-display text-xl font-semibold text-zinc-900 print:mb-4">
             Key context
           </h2>
           <div className="space-y-6">

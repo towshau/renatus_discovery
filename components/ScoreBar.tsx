@@ -12,6 +12,8 @@ interface ScoreBarProps {
   showValue?: boolean;
   /** When set, shown instead of numeric score (e.g. "—") */
   valueLabel?: string | null;
+  /** Append " / {maxScore}" after numeric scores (not when valueLabel is set) */
+  showDenominator?: boolean;
 }
 
 export function ScoreBar({
@@ -21,6 +23,7 @@ export function ScoreBar({
   label,
   showValue = true,
   valueLabel,
+  showDenominator = true,
 }: ScoreBarProps) {
   const [mounted, setMounted] = useState(false);
   const pct = Math.min(100, Math.max(0, (score / maxScore) * 100));
@@ -46,8 +49,17 @@ export function ScoreBar({
         />
       </div>
       {showValue ? (
-        <span className="min-w-[2.5rem] shrink-0 text-right font-mono text-sm font-medium tabular-nums text-zinc-800">
-          {valueLabel != null ? valueLabel : score.toFixed(1)}
+        <span className="min-w-[4.5rem] shrink-0 text-right font-mono text-sm font-medium tabular-nums text-zinc-800">
+          {valueLabel != null ? (
+            valueLabel
+          ) : showDenominator ? (
+            <>
+              {score.toFixed(1)}
+              <span className="text-zinc-500"> / {maxScore}</span>
+            </>
+          ) : (
+            score.toFixed(1)
+          )}
         </span>
       ) : null}
     </div>
