@@ -34,9 +34,9 @@ export function ScoreBar({
   return (
     <div className={cn("flex min-w-0 items-center gap-3", className)}>
       {label ? (
-        <span className="w-40 shrink-0 text-sm text-zinc-300">{label}</span>
+        <span className="w-40 shrink-0 text-sm text-zinc-700">{label}</span>
       ) : null}
-      <div className="relative h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-white/[0.08]">
+      <div className="relative h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-zinc-200">
         <div
           className="absolute left-0 top-0 h-full rounded-full transition-[width] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
           style={{
@@ -46,10 +46,7 @@ export function ScoreBar({
         />
       </div>
       {showValue ? (
-        <span
-          className="min-w-[2.5rem] shrink-0 text-right font-mono text-sm font-medium tabular-nums text-zinc-200"
-          style={{ fontFamily: "var(--font-jetbrains-mono)" }}
-        >
+        <span className="min-w-[2.5rem] shrink-0 text-right font-mono text-sm font-medium tabular-nums text-zinc-800">
           {valueLabel != null ? valueLabel : score.toFixed(1)}
         </span>
       ) : null}

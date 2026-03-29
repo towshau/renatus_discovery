@@ -1,11 +1,16 @@
 "use client";
 
-import { useDiagnosticStore } from "@/stores/useDiagnosticStore";
+import type { ComponentType } from "react";
 import {
-  PHASES,
-  SCORED_PHASE_IDS,
-  isNotesField,
-} from "@/lib/phases";
+  AlertCircle,
+  ArrowLeft,
+  Layers,
+  Printer,
+  TrendingUp,
+} from "lucide-react";
+import { useDiagnosticStore } from "@/stores/useDiagnosticStore";
+import { PHASES, SCORED_PHASE_IDS, isNotesField } from "@/lib/phases";
+import { PhaseIcon } from "@/lib/phase-icons";
 import { computePhaseScore, type PillarUrgencyRow } from "@/lib/scoring";
 import { cn } from "@/lib/cn";
 import { ScoreBar } from "./ScoreBar";
@@ -13,13 +18,13 @@ import { ScoreRing } from "./ScoreRing";
 
 function BucketSection({
   title,
-  emoji,
+  leadIcon: LeadIcon,
   subtitle,
   borderClass,
   rows,
 }: {
   title: string;
-  emoji: string;
+  leadIcon: ComponentType<{ className?: string; strokeWidth?: number }>;
   subtitle: string;
   borderClass: string;
   rows: PillarUrgencyRow[];
@@ -28,23 +33,23 @@ function BucketSection({
   return (
     <section
       className={cn(
-        "rounded-xl border border-white/[0.06] bg-white/[0.03] p-6",
-        "border-l-4",
+        "rounded-lg border border-zinc-200 bg-white p-6 shadow-sm",
+        "border-l-[3px]",
         borderClass,
       )}
     >
-      <h3 className="text-lg font-bold text-zinc-100">
-        <span className="mr-2" aria-hidden>
-          {emoji}
-        </span>
+      <h3 className="flex items-center gap-2 font-display text-lg font-semibold text-zinc-900">
+        <LeadIcon className="h-5 w-5 shrink-0 text-zinc-600" strokeWidth={1.5} />
         {title}
       </h3>
-      <p className="mt-1 text-sm text-zinc-500">{subtitle}</p>
+      <p className="mt-1 text-sm text-zinc-600">{subtitle}</p>
       <div className="mt-6 space-y-4">
         {rows.map((row) => (
           <div key={row.phaseId}>
-            <p className="mb-2 text-sm font-medium text-zinc-300">
-              <span className="mr-2">{row.icon}</span>
+            <p className="mb-2 flex items-center gap-2 text-sm font-medium text-zinc-800">
+              <span className="flex h-6 w-6 items-center justify-center text-zinc-500">
+                <PhaseIcon phaseId={row.phaseId} className="h-4 w-4" />
+              </span>
               {row.title}
             </p>
             <ScoreBar score={row.average} showValue />
@@ -76,8 +81,11 @@ export function RoadmapView() {
   const aiPriorities =
     typeof answers.ai_priorities === "string" ? answers.ai_priorities.trim() : "";
 
-  const sessionBlocks: { phaseTitle: string; icon: string; entries: { label: string; text: string }[] }[] =
-    [];
+  const sessionBlocks: {
+    phaseId: string;
+    phaseTitle: string;
+    entries: { label: string; text: string }[];
+  }[] = [];
 
   for (const phase of PHASES) {
     const entries: { label: string; text: string }[] = [];
@@ -89,50 +97,44 @@ export function RoadmapView() {
     }
     if (entries.length > 0) {
       sessionBlocks.push({
+        phaseId: phase.id,
         phaseTitle: phase.title,
-        icon: phase.icon,
         entries,
       });
     }
   }
 
   return (
-    <div className="roadmap-print px-4 py-8 md:px-12 md:py-12">
-      <header className="mx-auto max-w-4xl text-center print:py-4">
-        <span className="inline-block rounded-full bg-indigo-500/15 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-indigo-300">
+    <div className="roadmap-print bg-zinc-50/50 px-4 py-10 md:px-14 md:py-14">
+      <header className="mx-auto max-w-3xl text-center print:py-4">
+        <span className="inline-block rounded-md border border-zinc-200 bg-white px-3 py-1 font-mono text-[10px] font-medium uppercase tracking-[0.2em] text-zinc-600">
           Diagnostic complete
         </span>
-        <h1 className="mt-6 text-3xl font-bold text-zinc-50 md:text-4xl">
+        <h1 className="font-display mt-8 text-4xl font-semibold tracking-tight text-zinc-900 md:text-5xl">
           {businessName}
         </h1>
-        <p className="mt-2 text-lg text-zinc-400">
-          AI Transformation Roadmap for {ownerName}
+        <p className="mt-3 text-base text-zinc-600">
+          AI transformation roadmap — <span className="text-zinc-800">{ownerName}</span>
         </p>
 
-        <div className="relative mx-auto mt-10 flex justify-center">
+        <div className="relative mx-auto mt-12 flex justify-center">
           <div className="relative inline-flex items-center justify-center">
             <ScoreRing score={overall} />
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span
-                className="text-4xl font-medium tabular-nums text-zinc-100"
-                style={{ fontFamily: "var(--font-jetbrains-mono)" }}
-              >
+              <span className="font-mono text-4xl font-medium tabular-nums text-zinc-900">
                 {overall.toFixed(1)}
               </span>
             </div>
           </div>
         </div>
-        <p
-          className="mt-4 text-sm uppercase tracking-[0.15em] text-zinc-500"
-          style={{ fontFamily: "var(--font-jetbrains-mono)" }}
-        >
-          Overall Maturity Score
+        <p className="mt-5 font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-500">
+          Overall maturity score
         </p>
       </header>
 
-      <div className="mx-auto mt-12 max-w-4xl space-y-10">
-        <section className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-6">
-          <h2 className="mb-6 text-lg font-bold text-zinc-100">
+      <div className="mx-auto mt-14 max-w-3xl space-y-10">
+        <section className="rounded-lg border border-zinc-200 bg-white p-6 shadow-sm">
+          <h2 className="mb-6 font-display text-xl font-semibold text-zinc-900">
             Pillar breakdown
           </h2>
           <div className="space-y-4">
@@ -153,57 +155,59 @@ export function RoadmapView() {
           </div>
         </section>
 
-        <div className="space-y-6">
-          <h2 className="text-lg font-bold text-zinc-100">
+        <div className="space-y-5">
+          <h2 className="font-display text-xl font-semibold text-zinc-900">
             Prioritised roadmap
           </h2>
           <BucketSection
-            title="Fix Now"
-            emoji="🔴"
+            title="Fix now"
+            leadIcon={AlertCircle}
             subtitle="High gap, high impact — address in the first 30 days"
             borderClass="border-l-red-500"
             rows={roadmap.fixNow}
           />
           <BucketSection
-            title="Build Next"
-            emoji="🟡"
+            title="Build next"
+            leadIcon={Layers}
             subtitle="Important foundations — target within 60–90 days"
             borderClass="border-l-amber-500"
             rows={roadmap.buildNext}
           />
           <BucketSection
-            title="Optimise Later"
-            emoji="🟢"
+            title="Optimise later"
+            leadIcon={TrendingUp}
             subtitle="Efficiency gains — once the basics are solid"
-            borderClass="border-l-emerald-500"
+            borderClass="border-l-emerald-600"
             rows={roadmap.optimiseLater}
           />
         </div>
 
-        <section className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-6">
-          <h2 className="mb-6 text-lg font-bold text-zinc-100">Key context</h2>
+        <section className="rounded-lg border border-zinc-200 bg-white p-6 shadow-sm">
+          <h2 className="mb-6 font-display text-xl font-semibold text-zinc-900">
+            Key context
+          </h2>
           <div className="space-y-6">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-indigo-400">
-                12-Month Goal
+              <p className="font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-zinc-500">
+                12-month goal
               </p>
-              <p className="mt-2 whitespace-pre-wrap text-zinc-300">
+              <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-zinc-800">
                 {primaryGoal || "—"}
               </p>
             </div>
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-indigo-400">
-                Biggest Pain Point
+              <p className="font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-zinc-500">
+                Biggest pain point
               </p>
-              <p className="mt-2 whitespace-pre-wrap text-zinc-300">
+              <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-zinc-800">
                 {biggestPain || "—"}
               </p>
             </div>
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-indigo-400">
-                AI Quick Win
+              <p className="font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-zinc-500">
+                AI quick win
               </p>
-              <p className="mt-2 whitespace-pre-wrap text-zinc-300">
+              <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-zinc-800">
                 {aiPriorities || "—"}
               </p>
             </div>
@@ -212,24 +216,26 @@ export function RoadmapView() {
 
         {sessionBlocks.length > 0 && (
           <section>
-            <h2 className="mb-4 text-lg font-bold text-zinc-100">
+            <h2 className="mb-4 font-display text-xl font-semibold text-zinc-900">
               Session notes
             </h2>
             <div className="space-y-4">
               {sessionBlocks.map((block) => (
                 <div
-                  key={block.phaseTitle}
-                  className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-6"
+                  key={block.phaseId}
+                  className="rounded-lg border border-zinc-200 bg-white p-6 shadow-sm"
                 >
-                  <h3 className="flex items-center gap-2 text-base font-semibold text-zinc-100">
-                    <span>{block.icon}</span>
+                  <h3 className="flex items-center gap-2.5 font-display text-base font-semibold text-zinc-900">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-md border border-zinc-200 bg-zinc-50 text-zinc-600">
+                      <PhaseIcon phaseId={block.phaseId} className="h-4 w-4" />
+                    </span>
                     {block.phaseTitle}
                   </h3>
                   <div className="mt-4 space-y-4">
                     {block.entries.map((e) => (
                       <div key={e.label}>
                         <p className="text-xs text-zinc-500">{e.label}</p>
-                        <p className="mt-1 whitespace-pre-wrap text-sm text-zinc-300">
+                        <p className="mt-1 whitespace-pre-wrap text-sm leading-relaxed text-zinc-800">
                           {e.text}
                         </p>
                       </div>
@@ -241,19 +247,21 @@ export function RoadmapView() {
           </section>
         )}
 
-        <footer className="no-print flex flex-col gap-3 border-t border-white/[0.06] pt-8 sm:flex-row sm:justify-center">
+        <footer className="no-print flex flex-col gap-3 border-t border-zinc-200 pt-10 sm:flex-row sm:justify-center">
           <button
             type="button"
             onClick={() => setShowRoadmap(false)}
-            className="rounded-[10px] border border-white/[0.06] bg-transparent px-6 py-3 font-semibold text-zinc-500 transition hover:border-white/15 hover:text-zinc-300"
+            className="inline-flex items-center justify-center gap-2 rounded-lg border border-zinc-300 bg-white px-6 py-3 text-sm font-semibold text-zinc-700 transition hover:border-zinc-400 hover:bg-zinc-50"
           >
-            ← Back to Diagnostic
+            <ArrowLeft className="h-4 w-4" strokeWidth={2} />
+            Back to diagnostic
           </button>
           <button
             type="button"
             onClick={() => window.print()}
-            className="rounded-[10px] bg-indigo-500 px-6 py-3 font-semibold text-white transition hover:brightness-110"
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-zinc-900 px-6 py-3 text-sm font-semibold text-white transition hover:bg-zinc-800"
           >
+            <Printer className="h-4 w-4" strokeWidth={2} />
             Print / Save PDF
           </button>
         </footer>

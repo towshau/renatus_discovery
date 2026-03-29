@@ -1,8 +1,9 @@
 "use client";
 
 import type { Question } from "@/lib/phases";
+import { isMaturityNa, MATURITY_NOT_APPLICABLE } from "@/lib/maturity";
 import { cn } from "@/lib/cn";
-import { MaturitySelector } from "./MaturitySelector";
+import { MaturitySelector, type MaturitySelection } from "./MaturitySelector";
 import { SelectGroup } from "./SelectGroup";
 
 interface QuestionCardProps {
@@ -13,10 +14,10 @@ interface QuestionCardProps {
 
 export function QuestionCard({ question, value, onChange }: QuestionCardProps) {
   return (
-    <div className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-6">
+    <div className="rounded-lg border border-zinc-200 bg-white p-6 shadow-sm">
       <label
         id={`${question.id}-label`}
-        className="mb-4 block text-base font-bold text-zinc-100"
+        className="mb-3 block text-[15px] font-medium leading-snug text-zinc-900"
       >
         {question.label}
       </label>
@@ -28,8 +29,8 @@ export function QuestionCard({ question, value, onChange }: QuestionCardProps) {
           onChange={(e) => onChange(e.target.value)}
           placeholder={question.placeholder}
           className={cn(
-            "w-full rounded-lg border border-white/[0.06] bg-black/30 px-4 py-3 text-zinc-200",
-            "placeholder:text-zinc-600 outline-none transition focus:border-indigo-500",
+            "w-full rounded-md border border-zinc-200 bg-white px-4 py-3 text-sm text-zinc-900",
+            "placeholder:text-zinc-400 outline-none transition focus:border-zinc-400 focus:ring-1 focus:ring-zinc-300",
           )}
         />
       )}
@@ -41,8 +42,8 @@ export function QuestionCard({ question, value, onChange }: QuestionCardProps) {
           placeholder={question.placeholder}
           rows={4}
           className={cn(
-            "w-full resize-y rounded-lg border border-white/[0.06] bg-black/30 px-4 py-3 text-zinc-200",
-            "placeholder:text-zinc-600 outline-none transition focus:border-indigo-500",
+            "w-full resize-y rounded-md border border-zinc-200 bg-white px-4 py-3 text-sm text-zinc-900",
+            "placeholder:text-zinc-400 outline-none transition focus:border-zinc-400 focus:ring-1 focus:ring-zinc-300",
           )}
         />
       )}
@@ -57,11 +58,19 @@ export function QuestionCard({ question, value, onChange }: QuestionCardProps) {
 
       {question.type === "maturity" && (
         <>
-          <p className="mb-4 text-sm text-zinc-500">{question.description}</p>
+          <p className="mb-4 text-sm leading-relaxed text-zinc-600">
+            {question.description}
+          </p>
           <MaturitySelector
             questionId={question.id}
-            value={typeof value === "number" ? value : undefined}
-            onChange={onChange}
+            value={
+              isMaturityNa(value)
+                ? MATURITY_NOT_APPLICABLE
+                : typeof value === "number"
+                  ? value
+                  : undefined
+            }
+            onChange={(v: MaturitySelection) => onChange(v)}
           />
         </>
       )}

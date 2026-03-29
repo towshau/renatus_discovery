@@ -13,12 +13,12 @@ export function ProgressBar({ value, max, className }: ProgressBarProps) {
   return (
     <div
       className={cn(
-        "h-1 w-full overflow-hidden rounded-full bg-white/[0.06]",
+        "h-1 w-full overflow-hidden rounded-full bg-zinc-200",
         className,
       )}
     >
       <div
-        className="h-full rounded-full bg-indigo-500 transition-[width] duration-500 ease-out"
+        className="h-full rounded-full bg-zinc-900 transition-[width] duration-500 ease-out"
         style={{ width: `${pct}%` }}
       />
     </div>

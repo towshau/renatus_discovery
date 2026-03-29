@@ -19,10 +19,10 @@ export function SelectGroup({ options, value, onChange }: SelectGroupProps) {
             type="button"
             onClick={() => onChange(opt)}
             className={cn(
-              "rounded-[10px] border px-4 py-2 text-sm font-medium transition",
+              "rounded-md border px-3.5 py-2 text-left text-sm transition",
               active
-                ? "border-indigo-500 bg-indigo-500/15 text-indigo-200"
-                : "border-white/[0.06] bg-transparent text-zinc-500 hover:border-white/15 hover:text-zinc-300",
+                ? "border-zinc-800 bg-zinc-900 text-white"
+                : "border-zinc-200 bg-white text-zinc-600 hover:border-zinc-300 hover:text-zinc-900",
             )}
           >
             {opt}

@@ -38,7 +38,6 @@ export interface Phase {
   id: string;
   title: string;
   subtitle: string;
-  icon: string;
   questions: Question[];
 }
 
@@ -47,7 +46,6 @@ export const PHASES: Phase[] = [
     id: "business_dna",
     title: "Business DNA",
     subtitle: "Understanding the foundation",
-    icon: "🧬",
     questions: [
       {
         id: "business_name",
@@ -126,7 +124,6 @@ export const PHASES: Phase[] = [
     id: "brand_identity",
     title: "Brand & Identity",
     subtitle: "How you show up to the world",
-    icon: "🎨",
     questions: [
       {
         id: "brand_logo",
@@ -176,7 +173,6 @@ export const PHASES: Phase[] = [
     id: "marketing_sales",
     title: "Marketing & Sales",
     subtitle: "How you attract and convert customers",
-    icon: "📣",
     questions: [
       {
         id: "mkt_social",
@@ -233,7 +229,6 @@ export const PHASES: Phase[] = [
     id: "operations",
     title: "Operations & Workflows",
     subtitle: "How work actually gets done",
-    icon: "⚙️",
     questions: [
       {
         id: "ops_sops",
@@ -290,7 +285,6 @@ export const PHASES: Phase[] = [
     id: "data_systems",
     title: "Data & Systems",
     subtitle: "Your digital infrastructure",
-    icon: "🗄️",
     questions: [
       {
         id: "data_central",
@@ -347,7 +341,6 @@ export const PHASES: Phase[] = [
     id: "finance_admin",
     title: "Finance & Admin",
     subtitle: "Money in, money out, compliance",
-    icon: "💰",
     questions: [
       {
         id: "fin_invoicing",
@@ -397,7 +390,6 @@ export const PHASES: Phase[] = [
     id: "team_culture",
     title: "Team & Culture",
     subtitle: "Your people engine",
-    icon: "👥",
     questions: [
       {
         id: "team_onboarding",
@@ -447,7 +439,6 @@ export const PHASES: Phase[] = [
     id: "ai_readiness",
     title: "AI Readiness",
     subtitle: "Where AI can accelerate you",
-    icon: "🤖",
     questions: [
       {
         id: "ai_current",

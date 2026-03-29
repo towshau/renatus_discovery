@@ -1,14 +1,15 @@
 @import "tailwindcss";
 
 @theme inline {
-  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
-  --color-app-bg: #0a0a0f;
-  --color-app-surface: rgba(255, 255, 255, 0.03);
-  --color-app-border: rgba(255, 255, 255, 0.06);
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-playfair), ui-serif, Georgia, "Times New Roman", serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
+  --color-app-bg: #ffffff;
+  --color-app-surface: #f9fafb;
+  --color-app-border: #e4e4e7;
   --color-app-muted: #71717a;
-  --color-app-text: #e4e4e7;
-  --color-app-accent: #6366f1;
+  --color-app-text: #18181b;
+  --color-app-accent: #4f46e5;
 }
 
 html,
@@ -16,9 +17,8 @@ body {
   height: 100%;
 }
 
-body {
-  background: #0a0a0f;
-  color: #e4e4e7;
+.font-display {
+  font-family: var(--font-playfair), ui-serif, Georgia, "Times New Roman", serif;
 }
 
 @media print {
@@ -30,7 +30,7 @@ body {
   body {
     height: auto;
     overflow: visible !important;
-    background: #0a0a0f !important;
+    background: #fff !important;
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
   }

@@ -7,7 +7,8 @@ import {
   computePhaseScore,
   computeRoadmap,
   countAnsweredMaturity,
-  getTotalMaturityCount,
+  countMaturityNa,
+  getApplicableMaturityCount,
   type PhaseScoreResult,
   type RoadmapResult,
 } from "@/lib/scoring";
@@ -25,7 +26,9 @@ export interface DiagnosticState {
   getRoadmap: () => RoadmapResult;
   getOverallScore: () => number;
   getAnsweredMaturityCount: () => number;
-  getTotalMaturityCount: () => number;
+  /** Maturity items still in scope for scoring (total − N/A) */
+  getApplicableMaturityCount: () => number;
+  getMaturityNaCount: () => number;
 
   resetAll: () => void;
 }
@@ -60,7 +63,10 @@ export const useDiagnosticStore = create<DiagnosticState>()(
 
       getAnsweredMaturityCount: () => countAnsweredMaturity(get().answers),
 
-      getTotalMaturityCount: () => getTotalMaturityCount(),
+      getApplicableMaturityCount: () =>
+        getApplicableMaturityCount(get().answers),
+
+      getMaturityNaCount: () => countMaturityNa(get().answers),
 
       resetAll: () =>
         set({

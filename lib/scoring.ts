@@ -1,4 +1,5 @@
 import { PILLAR_WEIGHTS } from "./constants";
+import { isMaturityNa, isMaturityNumeric } from "./maturity";
 import {
   PHASES,
   SCORED_PHASE_IDS,
@@ -8,14 +9,15 @@ import {
 
 export interface PhaseScoreResult {
   average: number;
+  /** Maturity questions included in the average (numeric 0–4) */
   count: number;
-  total: number;
+  /** Maturity questions that apply to this pillar (excludes N/A) */
+  applicable: number;
 }
 
 export interface PillarUrgencyRow {
   phaseId: string;
   title: string;
-  icon: string;
   average: number;
   gap: number;
   weight: number;
@@ -44,10 +46,14 @@ export function computePhaseScore(
     .filter((q) => q.type === "maturity")
     .map((q) => q.id);
 
+  const applicableIds = maturityIds.filter(
+    (mid) => !isMaturityNa(answers[mid]),
+  );
+
   const values: number[] = [];
   for (const mid of maturityIds) {
     const v = answers[mid];
-    if (typeof v === "number" && v >= 0 && v <= 4) values.push(v);
+    if (isMaturityNumeric(v)) values.push(v);
   }
 
   if (values.length === 0) return null;
@@ -56,7 +62,7 @@ export function computePhaseScore(
   return {
     average: sum / values.length,
     count: values.length,
-    total: maturityIds.length,
+    applicable: applicableIds.length,
   };
 }
 
@@ -72,13 +78,35 @@ export function computeOverallScore(
   return avgs.reduce((a, b) => a + b, 0) / avgs.length;
 }
 
+/** Maturity questions answered with a numeric score (0–4); N/A excluded */
 export function countAnsweredMaturity(
   answers: Record<string, string | number>,
 ): number {
   let n = 0;
   for (const id of getMaturityQuestionIds()) {
     const v = answers[id];
-    if (typeof v === "number" && v >= 0 && v <= 4) n += 1;
+    if (isMaturityNumeric(v)) n += 1;
+  }
+  return n;
+}
+
+/** Total maturity items that count toward scoring (excludes N/A) */
+export function getApplicableMaturityCount(
+  answers: Record<string, string | number>,
+): number {
+  let n = 0;
+  for (const id of getMaturityQuestionIds()) {
+    if (!isMaturityNa(answers[id])) n += 1;
+  }
+  return n;
+}
+
+export function countMaturityNa(
+  answers: Record<string, string | number>,
+): number {
+  let n = 0;
+  for (const id of getMaturityQuestionIds()) {
+    if (isMaturityNa(answers[id])) n += 1;
   }
   return n;
 }
@@ -112,7 +140,6 @@ export function computeRoadmap(
     pillars.push({
       phaseId,
       title: phase.title,
-      icon: phase.icon,
       average: ps.average,
       gap,
       weight,
