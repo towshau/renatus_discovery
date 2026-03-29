@@ -1,26 +1,46 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+  --color-app-bg: #0a0a0f;
+  --color-app-surface: rgba(255, 255, 255, 0.03);
+  --color-app-border: rgba(255, 255, 255, 0.06);
+  --color-app-muted: #71717a;
+  --color-app-text: #e4e4e7;
+  --color-app-accent: #6366f1;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html,
+body {
+  height: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: #0a0a0f;
+  color: #e4e4e7;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  html,
+  body {
+    height: auto;
+    overflow: visible !important;
+    background: #0a0a0f !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .roadmap-print {
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+  }
+
+  .roadmap-print .rounded-xl {
+    break-inside: avoid;
+  }
 }
